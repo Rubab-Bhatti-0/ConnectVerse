@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="532.0" prefWidth="356.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%,  #64B5F6,#5E35B1);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.connectverseproject.myprofile">
+    <children>
+        <Label fx:id="profileuser" layoutX="9.0" layoutY="14.0" prefHeight="49.0" prefWidth="112.0" text="Username" textFill="#5e35b1">
+            <font>
+                <Font name="Cambria Bold Italic" size="19.0" />
+            </font>
+        </Label>
+
+        <Label fx:id="Lpost" layoutX="136.0" layoutY="63.0" prefHeight="18.0" prefWidth="35.0" text="07" textFill="WHITE">
+            <font>
+                <Font size="15.0" />
+            </font>
+        </Label>
+
+        <Label fx:id="tfollowers" layoutX="202.0" layoutY="60.0" prefHeight="25.0" prefWidth="35.0" text="20" textFill="WHITE">
+            <font>
+                <Font name="Cambria" size="17.0" />
+            </font>
+        </Label>
+
+        <Label fx:id="lfolowing" layoutX="294.0" layoutY="60.0" prefHeight="25.0" prefWidth="35.0" text="20" textFill="WHITE">
+            <font>
+                <Font name="Cambria" size="17.0" />
+            </font>
+        </Label>
+
+        <Label layoutX="21.0" layoutY="157.0" prefHeight="30.0" prefWidth="66.0" style="-fx-background-color: #1976D2; -fx-background-radius: 15px;" text="Posts" textFill="WHITE">
+            <font>
+                <Font name="Cambria Bold Italic" size="22.0" />
+            </font>
+        </Label>
+
+        <ListView fx:id="myprofile" layoutX="23.0" layoutY="192.0" prefHeight="281.0" prefWidth="319.0" style="-fx-background-radius: 15px;" />
+
+        <Button fx:id="backprofile" layoutX="14.0" layoutY="479.0" mnemonicParsing="false" onAction="#backHandler" style="-fx-background-color: #1976D2; -fx-background-radius: 15px;" text="Back" textFill="WHITE">
+            <font>
+                <Font name="Cambria Bold" size="15.0" />
+            </font>
+        </Button>
+
+        <Button layoutX="270.0" layoutY="97.0" mnemonicParsing="false" style="-fx-background-color: #ffffff; -fx-background-radius: 15px;" text="Following" textFill="#1976d2">
+            <font>
+                <Font name="Cambria Bold" size="14.0" />
+            </font>
+        </Button>
+
+        <Button layoutX="178.0" layoutY="97.0" mnemonicParsing="false" style="-fx-background-color: #ffffff; -fx-background-radius: 15px;" text="Followers" textFill="#1976d2">
+            <font>
+                <Font name="Cambria Bold" size="14.0" />
+            </font>
+        </Button>
+
+        <Label layoutX="124.0" layoutY="98.0" prefHeight="28.0" prefWidth="46.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15px;" text="Posts" textFill="#1976d2">
+            <font>
+                <Font name="Cambria Bold" size="18.0" />
+            </font>
+        </Label>
+
+        <Label fx:id="about" alignment="TOP_LEFT" layoutX="13.0" layoutY="59.0" prefHeight="93.0" prefWidth="100.0" style="-fx-background-radius: 15px;" text="Label" textFill="WHITE" wrapText="true">
+            <font>
+                <Font name="Cambria" size="13.0" />
+            </font>
+        </Label>
+    </children>
+</AnchorPane>

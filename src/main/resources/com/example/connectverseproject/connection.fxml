@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="532.0" prefWidth="356.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #5E35B1 50%,#0D47A1 0%,#64B5F6 100%,);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.connectverseproject.connection">
+    <children>
+        <!-- Title Bar -->
+        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="-1.0" prefHeight="55.0" prefWidth="362.0" style="-fx-background-color: #1976D2;" text="Connections" textFill="WHITE">
+            <font>
+                <Font name="Californian FB Bold" size="28.0" />
+            </font>
+        </Label>
+
+        <!-- Main Inner Pane with Rounded Corners -->
+        <AnchorPane layoutX="19.0" layoutY="65.0" prefHeight="427.0" prefWidth="325.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%,  #64B5F6,#5E35B1); -fx-background-radius: 20;">
+            <children>
+                <!-- Search Field -->
+                <Button fx:id="search" alignment="TOP_LEFT" layoutX="45.0" layoutY="10.0" mnemonicParsing="false" onAction="#addfriend" prefHeight="34.0" prefWidth="270.0" style="-fx-background-color: white; -fx-border-color: #1976D2; -fx-background-radius: 20; -fx-border-radius: 20;" text="Search" textFill="#1976D2">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Button>
+
+                <!-- Search Icon Button -->
+                <Button layoutX="-4.0" layoutY="10.0" mnemonicParsing="false" onAction="#addfriend" prefHeight="34.0" prefWidth="54.0" style="-fx-background-color: white; -fx-border-color: #1976D2; -fx-background-radius: 20; -fx-border-radius: 20;">
+                    <graphic>
+                        <ImageView fx:id="Search" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" />
+                    </graphic>
+                </Button>
+
+                <!-- Tab Buttons with Rounded Corners -->
+                <Button fx:id="suggestionB" layoutX="6.0" layoutY="54.0" mnemonicParsing="false" onAction="#suggestion" prefHeight="41.0" prefWidth="94.0" style="-fx-background-color: #1976D2; -fx-background-radius: 20;" text="Suggestions" textFill="WHITE">
+                    <font>
+                        <Font name="Californian FB" size="13.0" />
+                    </font>
+                </Button>
+
+                <Button fx:id="followingb" layoutX="110.0" layoutY="54.0" mnemonicParsing="false" onAction="#following" prefHeight="41.0" prefWidth="94.0" style="-fx-background-color: white; -fx-background-radius: 20;" text="Following" textFill="#1976D2">
+                    <font>
+                        <Font name="Californian FB" size="13.0" />
+                    </font>
+                </Button>
+
+                <Button fx:id="followersb" layoutX="214.0" layoutY="54.0" mnemonicParsing="false" onAction="#Followers" prefHeight="41.0" prefWidth="100.0" style="-fx-background-color: white; -fx-background-radius: 20;" text="Followers" textFill="#1976D2">
+                    <font>
+                        <Font name="Californian FB" size="13.0" />
+                    </font>
+                </Button>
+
+                <!-- Suggestions List with Rounded Corners -->
+                <ListView fx:id="suggestionList" layoutX="6.0" layoutY="105.0" prefHeight="305.0" prefWidth="313.0" style="-fx-background-radius: 20;" />
+            </children>
+        </AnchorPane>
+
+        <!-- Back Button with Rounded Corners -->
+        <Button fx:id="backhome" layoutX="7.0" layoutY="500.0" mnemonicParsing="false" onAction="#backHandler" style="-fx-background-color: #1976D2; -fx-background-radius: 20;" text="Back" textFill="WHITE">
+            <font>
+                <Font name="Californian FB" size="14.0" />
+            </font>
+        </Button>
+    </children>
+</AnchorPane>

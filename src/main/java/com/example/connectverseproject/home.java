@@ -1,0 +1,525 @@
+
+package com.example.connectverseproject;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
+
+public class home {
+
+    @FXML
+    private ImageView homeimage;
+    @FXML
+    private ImageView HomeIcon;
+    @FXML
+    private ImageView Connections;
+    @FXML
+    private ImageView Add;
+    @FXML
+    private ImageView MyProfile;
+    @FXML
+    private ImageView Setting;
+    @FXML
+    private VBox homeVbox;
+    @FXML
+    private VBox feedbox;
+    @FXML
+    private ChoiceBox<String> feedchoicebox;
+
+    @FXML
+    private Button homeButton;
+
+    @FXML
+    private Button connectionButton;
+
+    @FXML
+    private Button addPostButton;
+
+    @FXML
+    private Button myProfileButton;
+
+    @FXML
+    private Button settingsButton;
+
+    public void initialize() {
+        showFeed();
+        // Load the image from resources
+        Image logo = new Image(getClass().getResource("/photos/248918.png").toExternalForm());
+        homeimage.setImage(logo);
+
+
+        Image home = new Image(getClass().getResource("/photos/home1.png").toExternalForm());
+        HomeIcon.setImage(home);
+
+
+        Image connection = new Image(getClass().getResource("/photos/people.png").toExternalForm());
+        Connections.setImage(connection);
+
+
+        Image addpost = new Image(getClass().getResource("/photos/addp.png").toExternalForm());
+        Add.setImage(addpost);
+
+
+        Image profile = new Image(getClass().getResource("/photos/images.jpeg").toExternalForm());
+        MyProfile.setImage(profile);
+
+
+        Image setting = new Image(getClass().getResource("/photos/settings.png").toExternalForm());
+        Setting.setImage(setting);
+
+        // Apply tooltips to buttons
+        addTooltip(homeButton,        "Home");
+        addTooltip(connectionButton,  "Connections");
+        addTooltip(addPostButton,     "Add Post");
+        addTooltip(myProfileButton,   "My Profile");
+        addTooltip(settingsButton,    "Settings");
+        feedchoicebox.setItems(FXCollections.observableArrayList("All","Education", "Entertainment", "Sports","Others"));
+        feedchoicebox.setValue("Select choice!");
+        feedchoicebox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.equals("Select choice!")) {
+                personalizedFeed();
+            } else {
+                showFeed();
+            }
+        });
+
+
+    }
+
+    private void addTooltip(Node node, String text) {
+        Tooltip tooltip = new Tooltip(text);
+        tooltip.setStyle(
+                "-fx-font-size: 14px; " + "-fx-text-fill: white; " + "-fx-background-color: #1976D2; " + "-fx-padding: 5px;");
+        tooltip.setShowDelay(Duration.millis(200));
+        Tooltip.install(node, tooltip);
+    }
+    // Handle new post creation
+    @FXML
+    private void new_posting() {
+        showFeed();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("New Post");
+        dialog.setHeaderText("Enter post content and select category");
+
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getButtonTypes().clear();
+
+        ButtonType postButton = new ButtonType("Post", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialogPane.getButtonTypes().addAll(postButton, cancelButton);
+
+        TextArea contentArea = new TextArea();
+        contentArea.setPromptText("Enter your post here...");
+        contentArea.setWrapText(true);
+
+        ChoiceBox<String> categoryBox = new ChoiceBox<>(FXCollections.observableArrayList("Education", "Entertainment", "Sports","Others"));
+        categoryBox.setValue("Education");
+
+        VBox vbox = new VBox(10, new Label("Post Content:"), contentArea, new Label("Select Category:"), categoryBox);
+        vbox.setPadding(new Insets(10));
+        dialogPane.setContent(vbox);
+
+        dialog.setResultConverter(button -> {
+            if (button == postButton) {
+                String content = contentArea.getText().trim();
+                String category = categoryBox.getValue();
+
+                if (content.isEmpty()) {
+                    showAlert(Alert.AlertType.ERROR, "Validation Error", "Post content cannot be empty.");
+                    return null;
+                }
+                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+                try (Connection conn = dbconnection.getConnection()) {
+                    String sql = "INSERT INTO posts (userid, content,interest,timestamp ) VALUES (?, ?, ?, ?)";
+                    PreparedStatement stmt = conn.prepareStatement(sql);
+                    stmt.setInt(1, AppData.getCurrentUser().getId());
+                    stmt.setString(2, content);
+                    stmt.setString(3, category);
+                    stmt.setString(4, timestamp);
+                    stmt.executeUpdate();
+
+                    // Update current user's post list in memory
+                    post newPost = new post(content, category, timestamp);
+                    AppData.getCurrentUser().addPost(newPost);
+
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "✅ Post submitted successfully.");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showAlert(Alert.AlertType.ERROR, "Database Error", "❌ Failed to save post.");
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
+    }
+
+    @FXML
+    public void switchToConnections(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/connectverseproject/connection.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+
+    }
+
+    @FXML
+    public void switchToMyProfile(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/connectverseproject/myprofile.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+    @FXML
+    public void settings(){
+        if(homeVbox.isVisible()){
+            homeVbox.setVisible(false);
+            showFeed();
+        }else
+            homeVbox.setVisible(true);
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+    @FXML
+    public void switchToLogin(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/connectverseproject/hello-view.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+    public void showfeedbox(){
+        if(feedbox.isVisible()){
+            feedbox.setVisible(false);
+        }else
+            feedbox.setVisible(true);
+    }
+
+
+    @FXML
+    private ListView<Node> listviewhome;
+
+
+
+
+
+    @FXML
+    private void showFeed() {
+        user currentUser = AppData.getCurrentUser();
+        if (currentUser == null) return;
+
+        ArrayList<Edge> edges = AppData.graph.get(currentUser.getId());
+        if (edges == null || edges.isEmpty()) return;
+
+        listviewhome.getItems().clear();
+
+        for (Edge edge : edges) {
+            user friend = edge.dest;
+            if (friend == null) continue;
+
+            List<post> posts = friend.getPosts();
+            if (posts == null || posts.isEmpty()) continue;
+
+            for (post p : posts) {
+                if (p == null) continue;
+
+                VBox postBox = new VBox(5);
+                postBox.setPadding(new Insets(10));
+                postBox.setStyle("-fx-border-color: #ccc; " + "-fx-border-radius: 5; " + "-fx-background-color: #fefefe; " + "-fx-background-radius: 5;");
+                postBox.setMaxWidth(300);
+
+                Label friendLabel = new Label(friend.getName() != null ? friend.getName() : "Unknown");
+                friendLabel.setStyle("-fx-font-weight: bold; -fx-font-style: italic; -fx-font-size: 14px; -fx-text-fill: #1976D2;");
+
+                Label contentLabel = new Label(p.getContent() != null ? p.getContent() : "");
+                contentLabel.setWrapText(true);
+                contentLabel.setMaxWidth(240);
+                contentLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #555;");
+
+                Label dateTimeLabel = new Label(p.getDatetime() != null ? p.getDatetime() : "");
+                dateTimeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: gray;");
+                HBox timeBox = new HBox(dateTimeLabel);
+                timeBox.setAlignment(Pos.CENTER_RIGHT);
+
+                postBox.getChildren().addAll(friendLabel, contentLabel, timeBox);
+                listviewhome.getItems().add(postBox);
+            }
+        }
+    }
+
+    @FXML
+    private void personalizedFeed() {
+        user currentUser = AppData.getCurrentUser();
+        if (currentUser == null || feedchoicebox.getValue() == null) return;
+
+        String selectedInterest = feedchoicebox.getValue().trim();
+        if (selectedInterest.equalsIgnoreCase("All")) {
+            showFeed();
+            return;
+        }
+
+        ArrayList<Edge> edges = AppData.graph.get(currentUser.getId());
+        if (edges == null || edges.isEmpty()) return;
+
+        listviewhome.getItems().clear();
+
+        for (Edge edge : edges) {
+            user friend = edge.dest;
+            if (friend == null) continue;
+
+            List<post> posts = friend.getPosts();
+            if (posts == null || posts.isEmpty()) continue;
+
+            for (post p : posts) {
+                if (p == null || p.getInterest() == null) continue;
+                if (!p.getInterest().equalsIgnoreCase(selectedInterest)) continue;
+
+                VBox postBox = new VBox(5);
+                postBox.setPadding(new Insets(10));
+                postBox.setStyle("-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-color: #fefefe; -fx-background-radius: 5;");
+                postBox.setMaxWidth(300);
+
+                Label friendLabel = new Label(friend.getName() != null ? friend.getName() : "Unknown");
+                friendLabel.setStyle("-fx-font-weight: bold; -fx-font-style: italic; -fx-font-size: 14px; -fx-text-fill: #1976D2;");
+
+                Label contentLabel = new Label(p.getContent() != null ? p.getContent() : "");
+                contentLabel.setWrapText(true);
+                contentLabel.setMaxWidth(250);
+                contentLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #555;");
+
+                Label dateTimeLabel = new Label(p.getDatetime() != null ? p.getDatetime() : "");
+                dateTimeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: gray;");
+                HBox timeBox = new HBox(dateTimeLabel);
+                timeBox.setAlignment(Pos.CENTER_RIGHT);
+
+                postBox.getChildren().addAll(friendLabel, contentLabel, timeBox);
+                listviewhome.getItems().add(postBox);
+            }
+        }
+    }
+
+
+
+    @FXML
+    private void handleEditProfile() {
+        user currentUser = AppData.getCurrentUser();
+        if (currentUser == null) return;
+
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Edit Profile");
+
+        ToggleGroup toggleGroup = new ToggleGroup();
+
+        RadioButton editAbout = new RadioButton("Edit About");
+        RadioButton editUsername = new RadioButton("Edit Username");
+        RadioButton editPassword = new RadioButton("Edit Password");
+
+        editAbout.setToggleGroup(toggleGroup);
+        editUsername.setToggleGroup(toggleGroup);
+        editPassword.setToggleGroup(toggleGroup);
+
+        VBox radioBox = new VBox(10, editAbout, editUsername, editPassword);
+
+        TextField inputField = new TextField();
+        inputField.setVisible(false);
+
+        ButtonType okButtonType = ButtonType.OK;
+        dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+        Node okButton = dialog.getDialogPane().lookupButton(okButtonType);
+        okButton.setDisable(true);
+
+        toggleGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                inputField.setVisible(true);
+                okButton.setDisable(false);
+
+                if (editPassword.isSelected()) {
+                    inputField.setPromptText("Enter current password");
+                } else if (editUsername.isSelected()) {
+                    inputField.setPromptText("Enter new username");
+                } else if (editAbout.isSelected()) {
+                    inputField.setPromptText("Enter new about");
+                }
+            }
+        });
+
+        VBox content = new VBox(15, radioBox, inputField);
+        content.setPadding(new Insets(25));
+        dialog.getDialogPane().setContent(content);
+
+        dialog.setResultConverter(button -> {
+            if (button == okButtonType) {
+                String value = inputField.getText().trim();
+                if (value.isEmpty()) return null;
+
+                if (editAbout.isSelected()) {
+                    if (updateSingleField("about", value, currentUser.getId())) {
+                        currentUser.setAbout(value);
+                        showAlert(Alert.AlertType.INFORMATION, "Updated", "About updated successfully.");
+                    }
+                }
+                else if (editUsername.isSelected()) {
+                    if (value.equalsIgnoreCase(currentUser.getName())) {
+                        showAlert(Alert.AlertType.ERROR, "Same Username", "New username must be different.");
+                        return null;
+                    }
+                    if (usernameExists(value)) {
+                        showAlert(Alert.AlertType.ERROR, "Username Exists", "This username is already taken.");
+                        handleEditProfile();
+                        return null;
+                    }
+                    if (updateSingleField("username", value, currentUser.getId())) {
+                        currentUser.setusername(value);
+                        showAlert(Alert.AlertType.INFORMATION, "Updated", "Username updated successfully.");
+                    }
+                }
+                else if (editPassword.isSelected()) {
+                    if (!authenticate(value, currentUser)) {
+                        showAlert(Alert.AlertType.ERROR, "Incorrect Password", "Enter correct current password.");
+                        handleEditProfile();
+                        return null;
+                    }
+
+                    // Ask for new password
+                    Dialog<Void> newPassDialog = new Dialog<>();
+                    newPassDialog.setTitle("Change Password");
+
+                    TextField newPass = new TextField();
+                    newPass.setPromptText("Enter new password");
+
+                    VBox passBox = new VBox(15, newPass);
+                    passBox.setPadding(new Insets(25));
+
+                    newPassDialog.getDialogPane().setContent(passBox);
+                    newPassDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+                    newPassDialog.setResultConverter(passBtn -> {
+                        if (passBtn == ButtonType.OK) {
+                            String newPassword = newPass.getText().trim();
+                            if (newPassword.isEmpty()) {
+                                showAlert(Alert.AlertType.ERROR, "Empty Field", "New password cannot be empty.");
+                                return null;
+                            }
+                            if (newPassword.equals(currentUser.getPassword())) {
+                                showAlert(Alert.AlertType.ERROR, "Same Password", "New password must be different.");
+                                return null;
+                            }
+
+                            if (!isValidPassword(newPassword)) {
+                                showAlert(Alert.AlertType.ERROR, "Invalid Password",
+                                        "⚠️ Password must be at least 8 characters, include a number, and a special character.");
+                                return null;
+                            }
+                            if (passwordExists(newPassword)) {
+                                showAlert(Alert.AlertType.WARNING, "Password Exists",
+                                        "This password is already used by another account. Choose a unique one.");
+                                handleEditProfile();
+                                return null;
+                            }
+
+                            if (updateSingleField("password", newPassword, currentUser.getId())) {
+                                currentUser.setPassword(newPassword);
+                                showAlert(Alert.AlertType.INFORMATION, "Password Updated", "Password changed successfully.");
+                            }
+                        }
+                        return null;
+                    });
+
+                    newPassDialog.showAndWait();
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
+    }
+    private boolean isValidPassword(String password) {
+        boolean hasLength = password.length() >= 8;
+        boolean hasSpecial = Pattern.compile("[^a-zA-Z0-9]").matcher(password).find();
+        boolean hasDigit = Pattern.compile("[0-9]").matcher(password).find();
+        return hasLength && hasSpecial && hasDigit;
+    }
+    private boolean passwordExists(String password) {
+        String sql = "SELECT COUNT(*) FROM signup WHERE password = ?";
+        try (Connection conn = dbconnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, password);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+// Helper Methods
+
+    private boolean authenticate(String input, user u) {
+        return input.equals(u.getPassword());
+    }
+
+    private boolean usernameExists(String username) {
+        String sql = "SELECT COUNT(*) FROM signup WHERE username = ?";
+        try (Connection conn = dbconnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private boolean updateSingleField(String column, String value, int userId) {
+        String sql = "UPDATE signup SET " + column + " = ? WHERE idsignup = ?";
+        try (Connection conn = dbconnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, value);
+            stmt.setInt(2, userId);
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Could not update " + column);
+            return false;
+        }
+    }
+
+
+
+
+}
+
+
+

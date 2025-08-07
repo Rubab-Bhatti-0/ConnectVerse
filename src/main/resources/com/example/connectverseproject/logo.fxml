@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="532.0" prefWidth="356.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #5E35B1 50%,#0D47A1 0%,#64B5F6 100%,);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.connectverseproject.logo">
+
+   <children>
+
+      <!-- Centered Image with Rounded Corners and Shadow -->
+      <ImageView fx:id="photo" fitHeight="124.0" fitWidth="166.0" layoutX="97.0" layoutY="141.0" pickOnBounds="true" preserveRatio="true">
+         <clip>
+            <Rectangle arcHeight="30.0" arcWidth="30.0" height="260.0" width="320.0" />
+         </clip>
+         <effect>
+            <DropShadow color="#00000055" radius="10.0" />
+         </effect>
+      </ImageView>
+
+      <!-- Tagline -->
+      <Label alignment="CENTER" layoutX="42.0" layoutY="447.0" prefHeight="80.0" prefWidth="300.0" text="Your feed. Your network. Your universe — only on ConnectVerse." textFill="WHITE" wrapText="true">
+         <font>
+            <Font name="Segoe UI Semibold" size="14.0" />
+         </font>
+         <effect>
+            <DropShadow color="#000000AA" offsetX="3.0" offsetY="3.0" radius="20.0" />
+         </effect>
+      </Label>
+      <Label layoutX="103.0" layoutY="266.0" text="ConnectVerse" textFill="WHITE">
+         <font>
+            <Font name="System Bold Italic" size="20.0" />
+         </font>
+      </Label>
+
+   </children>
+</AnchorPane>

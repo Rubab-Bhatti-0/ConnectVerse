@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="532.0" prefWidth="356.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #5E35B1 50%,#0D47A1 0%,#64B5F6 100%,);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.connectverseproject.home">
+    <children>
+        <!-- Inner Pane with Blue Gradient Background and Rounded Corners -->
+        <AnchorPane layoutX="18.0" layoutY="70.0" prefHeight="430.0" prefWidth="320.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #0D47A1, #64B5F6); -fx-background-radius: 15; -fx-border-radius: 15;">
+            <children>
+                <Label layoutX="110.0" layoutY="10.0" text="Feed" textFill="WHITE">
+                    <font>
+                        <Font name="Californian FB Bold" size="22.0" />
+                    </font>
+                </Label>
+
+                <ListView fx:id="listviewhome" layoutX="11.0" layoutY="50.0" prefHeight="290.0" prefWidth="300.0" style="-fx-background-radius: 10; -fx-background-color: #E3F2FD;" />
+
+                <!-- Navigation Buttons -->
+                <Button fx:id="homeButton" layoutX="10.0" layoutY="363.0" prefHeight="35.0" prefWidth="45.0" style="-fx-background-color: white; -fx-background-radius: 8;">
+                    <graphic>
+                        <ImageView fx:id="HomeIcon" fitHeight="26.0" fitWidth="26.0" preserveRatio="true" />
+                    </graphic>
+                </Button>
+
+                <Button fx:id="addPostButton" layoutX="132.0" layoutY="363.0" onAction="#new_posting" prefHeight="35.0" prefWidth="45.0" style="-fx-background-color: white; -fx-background-radius: 8;">
+                    <graphic>
+                        <ImageView fx:id="Add" fitHeight="26.0" fitWidth="26.0" preserveRatio="true" />
+                    </graphic>
+                </Button>
+
+                <Button fx:id="myProfileButton" layoutX="190.0" layoutY="363.0" onAction="#switchToMyProfile" prefHeight="35.0" prefWidth="45.0" style="-fx-background-color: white; -fx-background-radius: 8;">
+                    <graphic>
+                        <ImageView fx:id="MyProfile" fitHeight="26.0" fitWidth="26.0" preserveRatio="true" />
+                    </graphic>
+                </Button>
+
+                <Button fx:id="settingsButton" layoutX="255.0" layoutY="363.0" onAction="#settings" prefHeight="35.0" prefWidth="45.0" style="-fx-background-color: white; -fx-background-radius: 8;">
+                    <graphic>
+                        <ImageView fx:id="Setting" fitHeight="26.0" fitWidth="26.0" preserveRatio="true" />
+                    </graphic>
+                </Button>
+
+                <Button fx:id="connectionButton" layoutX="72.0" layoutY="363.0" onAction="#switchToConnections" prefHeight="35.0" prefWidth="35.0" style="-fx-background-color: white; -fx-background-radius: 8;">
+                    <graphic>
+                        <ImageView fx:id="Connections" fitHeight="26.0" fitWidth="26.0" preserveRatio="true" />
+                    </graphic>
+                </Button>
+
+                <!-- Hidden logout/edit profile -->
+                <VBox fx:id="homeVbox" layoutX="242.0" layoutY="273.0" prefHeight="86.0" prefWidth="75.0" visible="false">
+                    <children>
+                        <Button fx:id="logout" onAction="#switchToLogin" prefHeight="28.0" prefWidth="86.0" style="-fx-background-color: white; -fx-border-color: #0D47A1; -fx-border-radius: 8; -fx-background-radius: 8;" text="Logout" textFill="#0D47A1">
+                            <font>
+                                <Font name="Poppins Medium" size="13.0" />
+                            </font>
+                        </Button>
+                        <Button fx:id="edit" onAction="#handleEditProfile" prefHeight="50.0" prefWidth="75.0" style="-fx-background-color: white; -fx-border-color: #0D47A1; -fx-border-radius: 8; -fx-background-radius: 8;" text="Edit Profile" textFill="#0D47A1" wrapText="true">
+                            <font>
+                                <Font name="Poppins Medium" size="13.0" />
+                            </font>
+                        </Button>
+                    </children>
+                </VBox>
+
+                <!-- Optional feed choice box -->
+                <VBox fx:id="feedbox" layoutX="10.0" layoutY="10.0" prefHeight="40.0" prefWidth="150.0" visible="false">
+                    <children>
+                        <ChoiceBox fx:id="feedchoicebox" onMouseClicked="#personalizedFeed" prefWidth="150.0" />
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+
+        <!-- Header Bar -->
+        <Label alignment="CENTER" layoutX="48.0" prefHeight="50.0" prefWidth="290.0" style="-fx-background-color: #0D47A1; -fx-background-radius: 0 0 10 10;" text="HOME" textFill="WHITE">
+            <font>
+                <Font name="Californian FB Bold" size="28.0" />
+            </font>
+        </Label>
+
+        <Button fx:id="ps" layoutY="-2.0" onAction="#showfeedbox" prefHeight="52.0" prefWidth="49.0" style="-fx-background-color: transparent;">
+            <graphic>
+                <ImageView fx:id="homeimage" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true" />
+            </graphic>
+        </Button>
+    </children>
+</AnchorPane>
