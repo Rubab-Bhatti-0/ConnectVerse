@@ -8,11 +8,30 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.effect.Reflection?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.shape.Rectangle?>
 <AnchorPane prefHeight="532.0" prefWidth="356.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #5E35B1 50%,#0D47A1 0%,#64B5F6 100%,);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.connectverseproject.signup">
    <children>
       <AnchorPane layoutX="12.0" layoutY="23.0" prefHeight="482.0" prefWidth="333.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%,  #64B5F6,#5E35B1); -fx-background-radius: 15;">
          <children>
-            <ImageView fx:id="signupimage" fitHeight="90.0" fitWidth="115.0" layoutX="-7.0" layoutY="-10.0" pickOnBounds="true" preserveRatio="true" />
+            <!-- Logo with 3D Effect (Shadow + Reflection + Glow) -->
+            <ImageView fx:id="signupimage" fitHeight="90.0" fitWidth="115.0" layoutX="-7.0" layoutY="-10.0" pickOnBounds="true" preserveRatio="true">
+               <clip>
+                  <Rectangle arcHeight="40.0" arcWidth="40.0" height="200.0" width="200.0" />
+               </clip>
+               <effect>
+                  <DropShadow color="#00000088" offsetX="5.0" offsetY="5.0" radius="18.0" />
+               </effect>
+            </ImageView>
+
+            <!-- Reflection under Logo -->
+            <ImageView fx:id="photoReflection" fitHeight="150.0" fitWidth="180.0" layoutX="90.0" layoutY="280.0" opacity="0.25" pickOnBounds="true" preserveRatio="true" scaleY="-1">
+               <effect>
+                  <Reflection bottomOpacity="0.0" fraction="0.6" topOpacity="0.4" />
+               </effect>
+            </ImageView>
+
 
             <Label layoutX="31.0" layoutY="106.0" text="Username" textFill="WHITE">
                <font><Font name="Segoe UI Semibold" size="15.0" /></font>

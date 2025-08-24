@@ -3,12 +3,18 @@
 package com.example.connectverseproject;
 
 
+import eu.hansolo.toolbox.time.DateTimes;
+
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.Date;
 
 public class DataLoader {
     public static void loadAllData() {
         Map<Integer, user> userMap = new HashMap<>();
+
         try (Connection conn = dbconnection.getConnection()) {
             // Load users
             ResultSet rs = conn.prepareStatement("SELECT * FROM signup").executeQuery();
@@ -27,8 +33,26 @@ public class DataLoader {
                 int userId = rs.getInt("userid");
                 String content = rs.getString("content");
                 String category = rs.getString("interest");
-                String datetime = rs.getString("timestamp");
-                post p = new post(content, category, datetime);
+               Timestamp date= rs.getTimestamp("timestamp");
+//                System.out.println(date);
+//                LocalDateTime lc=LocalDateTime.now();
+//               // LocalDateTime dt=lc.minus(lc);
+//             int t= date.compareTo(Timestamp.valueOf(lc));
+//                if(t==0){
+//                    System.out.println("equal");
+//                } else if (t>=0) {
+//                    System.out.println(date+" is befoe to "+ lc);
+//
+//                }
+//                else{
+//                    System.out.println(lc+" is befoe to "+ date.toString());
+//
+//                }
+//              Date datetime = rs.getDate("timestamp");
+//                System.out.println(datetime);
+//              //  Date d =datetime.formatted((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//                System.out.println();
+                post p = new post(content, category, date);
                 if (userMap.containsKey(userId)) {
                     userMap.get(userId).addPost(p);
                     AppData.totalPosts++;
@@ -55,5 +79,7 @@ public class DataLoader {
         }
 
     }
+
+
 
 }

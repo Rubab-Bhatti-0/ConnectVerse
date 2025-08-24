@@ -63,7 +63,7 @@ public void myProfile() {
         contentLabel.setMaxWidth(270); // Adjust width if needed
 
         // Post date/time
-        Label dateTimeLabel = new Label(p.getDatetime() != null ? p.getDatetime() : "");
+        Label dateTimeLabel = new Label(p.getDatetime() != null ? p.getDatetime().toString() : "");
         dateTimeLabel.setStyle("-fx-font-size: 11; -fx-text-fill: gray;");
         HBox timeBox = new HBox(dateTimeLabel);
         timeBox.setAlignment(Pos.CENTER_RIGHT);

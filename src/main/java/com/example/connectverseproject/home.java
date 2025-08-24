@@ -1,7 +1,7 @@
 
 package com.example.connectverseproject;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
@@ -21,10 +21,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.PriorityQueue;
 import java.util.regex.Pattern;
 
 public class home {
@@ -150,7 +149,8 @@ public class home {
                     showAlert(Alert.AlertType.ERROR, "Validation Error", "Post content cannot be empty.");
                     return null;
                 }
-                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                LocalDateTime currentdate=LocalDateTime.now();
+                String timestamp = currentdate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
                 try (Connection conn = dbconnection.getConnection()) {
                     String sql = "INSERT INTO posts (userid, content,interest,timestamp ) VALUES (?, ?, ?, ?)";
@@ -162,8 +162,8 @@ public class home {
                     stmt.executeUpdate();
 
                     // Update current user's post list in memory
-                    post newPost = new post(content, category, timestamp);
-                    AppData.getCurrentUser().addPost(newPost);
+                    //post newPost = new post(content, category, currentdate);
+                 //   AppData.getCurrentUser().addPost(newPost);
 
                     showAlert(Alert.AlertType.INFORMATION, "Success", "✅ Post submitted successfully.");
 
@@ -231,25 +231,39 @@ public class home {
 
 
 
+   private void feed(priorityQueue queue){
+       user currentUser = AppData.getCurrentUser();
+       if (currentUser == null) return;
 
+       ArrayList<Edge> edges = AppData.graph.get(currentUser.getId());
+       // PriorityQueue<post> pq = new PriorityQueue<>();
+       if (edges == null || edges.isEmpty()) return;
+
+       listviewhome.getItems().clear();
+
+       for (Edge edge : edges) {
+           user friend = edge.dest;
+           if (friend == null) continue;
+           // here changes
+           List<post> posts = friend.getPosts();
+           for (post p : posts) {
+               if (p != null){
+                   //   pq.add(p);
+                   p.setOwner(friend.getName());
+                   queue.feed_by_Priority(p);
+
+               }
+
+           }
+       }
+   }
     @FXML
     private void showFeed() {
-        user currentUser = AppData.getCurrentUser();
-        if (currentUser == null) return;
-
-        ArrayList<Edge> edges = AppData.graph.get(currentUser.getId());
-        if (edges == null || edges.isEmpty()) return;
-
-        listviewhome.getItems().clear();
-
-        for (Edge edge : edges) {
-            user friend = edge.dest;
-            if (friend == null) continue;
-
-            List<post> posts = friend.getPosts();
-            if (posts == null || posts.isEmpty()) continue;
-
-            for (post p : posts) {
+        priorityQueue queue=new priorityQueue();
+        feed(queue);
+           post p;
+            while (!queue.isEmpty()) {
+                p=queue.poll();
                 if (p == null) continue;
 
                 VBox postBox = new VBox(5);
@@ -257,7 +271,7 @@ public class home {
                 postBox.setStyle("-fx-border-color: #ccc; " + "-fx-border-radius: 5; " + "-fx-background-color: #fefefe; " + "-fx-background-radius: 5;");
                 postBox.setMaxWidth(300);
 
-                Label friendLabel = new Label(friend.getName() != null ? friend.getName() : "Unknown");
+                Label friendLabel = new Label(p.getowner() != null ? p.getowner() : "Unknown");
                 friendLabel.setStyle("-fx-font-weight: bold; -fx-font-style: italic; -fx-font-size: 14px; -fx-text-fill: #1976D2;");
 
                 Label contentLabel = new Label(p.getContent() != null ? p.getContent() : "");
@@ -265,21 +279,23 @@ public class home {
                 contentLabel.setMaxWidth(240);
                 contentLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #555;");
 
-                Label dateTimeLabel = new Label(p.getDatetime() != null ? p.getDatetime() : "");
+                Label dateTimeLabel = new Label(p.getDatetime().toString() != null ? p.getDatetime().toString() : "");
                 dateTimeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: gray;");
                 HBox timeBox = new HBox(dateTimeLabel);
                 timeBox.setAlignment(Pos.CENTER_RIGHT);
 
                 postBox.getChildren().addAll(friendLabel, contentLabel, timeBox);
                 listviewhome.getItems().add(postBox);
+
             }
         }
-    }
+
 
     @FXML
     private void personalizedFeed() {
-        user currentUser = AppData.getCurrentUser();
-        if (currentUser == null || feedchoicebox.getValue() == null) return;
+
+        priorityQueue queue=new priorityQueue();
+        feed(queue);
 
         String selectedInterest = feedchoicebox.getValue().trim();
         if (selectedInterest.equalsIgnoreCase("All")) {
@@ -287,19 +303,10 @@ public class home {
             return;
         }
 
-        ArrayList<Edge> edges = AppData.graph.get(currentUser.getId());
-        if (edges == null || edges.isEmpty()) return;
 
-        listviewhome.getItems().clear();
-
-        for (Edge edge : edges) {
-            user friend = edge.dest;
-            if (friend == null) continue;
-
-            List<post> posts = friend.getPosts();
-            if (posts == null || posts.isEmpty()) continue;
-
-            for (post p : posts) {
+            post p;
+        while (!queue.isEmpty()) {
+            p=queue.poll();
                 if (p == null || p.getInterest() == null) continue;
                 if (!p.getInterest().equalsIgnoreCase(selectedInterest)) continue;
 
@@ -308,7 +315,7 @@ public class home {
                 postBox.setStyle("-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-color: #fefefe; -fx-background-radius: 5;");
                 postBox.setMaxWidth(300);
 
-                Label friendLabel = new Label(friend.getName() != null ? friend.getName() : "Unknown");
+                Label friendLabel = new Label(p.getowner()!= null ? p.getowner() : "Unknown");
                 friendLabel.setStyle("-fx-font-weight: bold; -fx-font-style: italic; -fx-font-size: 14px; -fx-text-fill: #1976D2;");
 
                 Label contentLabel = new Label(p.getContent() != null ? p.getContent() : "");
@@ -316,7 +323,7 @@ public class home {
                 contentLabel.setMaxWidth(250);
                 contentLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #555;");
 
-                Label dateTimeLabel = new Label(p.getDatetime() != null ? p.getDatetime() : "");
+                Label dateTimeLabel = new Label(p.getDatetime() != null ? p.getDatetime().toString() : "");
                 dateTimeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: gray;");
                 HBox timeBox = new HBox(dateTimeLabel);
                 timeBox.setAlignment(Pos.CENTER_RIGHT);
@@ -325,7 +332,7 @@ public class home {
                 listviewhome.getItems().add(postBox);
             }
         }
-    }
+
 
 
 
@@ -462,6 +469,7 @@ public class home {
 
         dialog.showAndWait();
     }
+
     private boolean isValidPassword(String password) {
         boolean hasLength = password.length() >= 8;
         boolean hasSpecial = Pattern.compile("[^a-zA-Z0-9]").matcher(password).find();
