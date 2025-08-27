@@ -71,9 +71,6 @@ public class HelloController {
             AppData.showAlert(Alert.AlertType.ERROR,"Login Failed", "⚠️ Please enter username and password.");
             return;
         }
-
-        // Load data only once (if not already loaded)
-
             DataLoader.loadAllData();
 
 

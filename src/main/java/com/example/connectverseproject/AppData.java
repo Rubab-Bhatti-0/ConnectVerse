@@ -69,25 +69,5 @@ public class AppData {
         alert.showAndWait();
     }
 
-
-
-
-//    public static void displayGraph() {
-//        for (int i = 0; i < graph.size(); i++) {
-//            System.out.print("User ID " + i + " -> ");
-//
-//            ArrayList<Edge> edges = graph.get(i);
-//            if (edges.isEmpty()) {
-//                System.out.println("No friends");
-//                continue;
-//            }
-//
-//            for (Edge edge : edges) {
-//                System.out.print(edge.dest.getName() + " (ID: " + edge.dest.getId() + "), ");
-//            }
-//            System.out.println(); // Newline for next user
-//        }
-//    }
-
 }
 

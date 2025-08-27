@@ -14,7 +14,7 @@
         <!-- Inner Pane with Blue Gradient Background and Rounded Corners -->
         <AnchorPane layoutX="18.0" layoutY="70.0" prefHeight="430.0" prefWidth="320.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #0D47A1, #64B5F6); -fx-background-radius: 15; -fx-border-radius: 15;">
             <children>
-                <Label layoutX="110.0" layoutY="10.0" text="Feed" textFill="WHITE">
+                <Label layoutX="219.0" layoutY="4.0" prefHeight="40.0" prefWidth="46.0" text="Feed" textFill="WHITE">
                     <font>
                         <Font name="Californian FB Bold" size="22.0" />
                     </font>
@@ -72,7 +72,7 @@
                 <!-- Optional feed choice box -->
                 <VBox fx:id="feedbox" layoutX="10.0" layoutY="10.0" prefHeight="40.0" prefWidth="150.0" visible="false">
                     <children>
-                        <ChoiceBox fx:id="feedchoicebox"  prefWidth="150.0" />
+                        <ChoiceBox fx:id="feedchoicebox" prefWidth="150.0" />
                     </children>
                 </VBox>
             </children>

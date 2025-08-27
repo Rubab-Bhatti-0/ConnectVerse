@@ -19,6 +19,16 @@ public class user {
         this.posts = new LinkedList<>();
 
     }
+    public user( String name, String email,String about,String password) {
+        this.name = name;
+        this.email = email;
+        this.About=about;
+        this.password=password;
+        this.posts = new LinkedList<>();
+
+    }
+
+
   // add at start
     public void addPost(post po) {
         posts.addFirst(po);

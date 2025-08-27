@@ -1,8 +1,6 @@
 
 package com.example.connectverseproject;
 import java.sql.*;
-import java.time.LocalDate;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
@@ -18,14 +16,12 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.PriorityQueue;
 import java.util.regex.Pattern;
 
 public class home {
@@ -103,11 +99,6 @@ public class home {
 
             String selectedInterest = feedchoicebox.getValue().trim();
             personalizedFeed(selectedInterest);
-//            if (newVal != null && !newVal.equals("Select choice!")) {
-//                personalizedFeed(selectedInterest);
-//            } else {
-//                showFeed();
-//            }
         });
 
 
@@ -152,7 +143,7 @@ public class home {
                 String category = categoryBox.getValue();
 
                 if (content.isEmpty()) {
-                    showAlert(Alert.AlertType.ERROR, "Validation Error", "Post content cannot be empty.");
+                    AppData.showAlert(Alert.AlertType.ERROR, "Validation Error", "Post content cannot be empty.");
                     return null;
                 }
                 LocalDateTime currentdate=LocalDateTime.now();
@@ -213,13 +204,6 @@ public class home {
             homeVbox.setVisible(true);
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
     @FXML
     public void switchToLogin(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/com/example/connectverseproject/hello-view.fxml"));
@@ -392,7 +376,7 @@ public class home {
                 HBox timeBox = new HBox(dateTimeLabel);
                 timeBox.setAlignment(Pos.CENTER_RIGHT);
 
-            // Like button (using heart emoji ❤️ or ♥)
+
 
             ImageView photo = new ImageView(new Image(getClass().getResource("/photos/purpleHeart.png").toExternalForm()));
             photo.setFitHeight(20);
@@ -406,32 +390,23 @@ public class home {
             if (DataLoader.hasUserLiked(p.getowner(), AppData.currentUser.getId())) {
                 likeButton.setGraphic(photo);//
             } else {
-                //likeButton.setText("❤");
                 likeButton.setGraphic(whiteHeart);
             }
             likeButton.setStyle("-fx-background-color: white; " + "-fx-background-radius: 8; " +  "-fx-padding: 6; " +   "-fx-cursor: hand;");
-            // likeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14; -fx-text-fill: #5e35b1;");
-
             int likeCount = DataLoader.getLikeCount(p.getowner()); // from DB
-
             String l=likeCount==1?" like":" likes";
             Label likeCountLabel = new Label(String.valueOf(likeCount)+l);
             likeCountLabel.setStyle("-fx-font-size: 12; -fx-text-fill: #5e35b1;");
-
             post finalP = p;
             likeButton.setOnAction(e -> {
                 DataLoader.toggleLike(finalP.getowner(), AppData.currentUser.getId());
-
                 // Update count
                 int updatedCount = DataLoader.getLikeCount(finalP.getowner());
                 String k=updatedCount==1?" like":" likes";
                 likeCountLabel.setText(String.valueOf(updatedCount)+k);
-
-                // Change heart color
                 if (DataLoader.hasUserLiked(finalP.getowner(), AppData.currentUser.getId())) {
                     likeButton.setGraphic(photo);//
                 } else {
-                    //likeButton.setText("❤");
                     likeButton.setGraphic(whiteHeart);
                 }
             });
@@ -506,27 +481,27 @@ public class home {
                 if (editAbout.isSelected()) {
                     if (updateSingleField("about", value, currentUser.getId())) {
                         currentUser.setAbout(value);
-                        showAlert(Alert.AlertType.INFORMATION, "Updated", "About updated successfully.");
+                       AppData.showAlert(Alert.AlertType.INFORMATION, "Updated", "About updated successfully.");
                     }
                 }
                 else if (editUsername.isSelected()) {
                     if (value.equalsIgnoreCase(currentUser.getName())) {
-                        showAlert(Alert.AlertType.ERROR, "Same Username", "New username must be different.");
+                        AppData.showAlert(Alert.AlertType.ERROR, "Same Username", "New username must be different.");
                         return null;
                     }
                     if (usernameExists(value)) {
-                        showAlert(Alert.AlertType.ERROR, "Username Exists", "This username is already taken.");
+                        AppData.showAlert(Alert.AlertType.ERROR, "Username Exists", "This username is already taken.");
                         handleEditProfile();
                         return null;
                     }
                     if (updateSingleField("username", value, currentUser.getId())) {
                         currentUser.setusername(value);
-                        showAlert(Alert.AlertType.INFORMATION, "Updated", "Username updated successfully.");
+                        AppData.showAlert(Alert.AlertType.INFORMATION, "Updated", "Username updated successfully.");
                     }
                 }
                 else if (editPassword.isSelected()) {
                     if (!authenticate(value, currentUser)) {
-                        showAlert(Alert.AlertType.ERROR, "Incorrect Password", "Enter correct current password.");
+                        AppData.showAlert(Alert.AlertType.ERROR, "Incorrect Password", "Enter correct current password.");
                         handleEditProfile();
                         return null;
                     }
@@ -548,29 +523,27 @@ public class home {
                         if (passBtn == ButtonType.OK) {
                             String newPassword = newPass.getText().trim();
                             if (newPassword.isEmpty()) {
-                                showAlert(Alert.AlertType.ERROR, "Empty Field", "New password cannot be empty.");
+                                AppData.showAlert(Alert.AlertType.ERROR, "Empty Field", "New password cannot be empty.");
                                 return null;
                             }
                             if (newPassword.equals(currentUser.getPassword())) {
-                                showAlert(Alert.AlertType.ERROR, "Same Password", "New password must be different.");
+                                AppData.showAlert(Alert.AlertType.ERROR, "Same Password", "New password must be different.");
                                 return null;
                             }
 
                             if (!isValidPassword(newPassword)) {
-                                showAlert(Alert.AlertType.ERROR, "Invalid Password",
-                                        "⚠️ Password must be at least 8 characters, include a number, and a special character.");
+                                AppData.showAlert(Alert.AlertType.ERROR, "Invalid Password", "⚠️ Password must be at least 8 characters, include a number, and a special character.");
                                 return null;
                             }
                             if (passwordExists(newPassword)) {
-                                showAlert(Alert.AlertType.WARNING, "Password Exists",
-                                        "This password is already used by another account. Choose a unique one.");
+                                AppData. showAlert(Alert.AlertType.WARNING, "Password Exists", "This password is already used by another account. Choose a unique one.");
                                 handleEditProfile();
                                 return null;
                             }
 
                             if (updateSingleField("password", newPassword, currentUser.getId())) {
                                 currentUser.setPassword(newPassword);
-                                showAlert(Alert.AlertType.INFORMATION, "Password Updated", "Password changed successfully.");
+                                AppData.showAlert(Alert.AlertType.INFORMATION, "Password Updated", "Password changed successfully.");
                             }
                         }
                         return null;
@@ -634,7 +607,7 @@ public class home {
             return rowsUpdated > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Could not update " + column);
+            AppData.showAlert(Alert.AlertType.ERROR, "Database Error", "Could not update " + column);
             return false;
         }
     }

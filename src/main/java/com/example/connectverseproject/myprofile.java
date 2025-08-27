@@ -33,13 +33,6 @@ public class myprofile {
     @FXML
     private Label Lpost;
     @FXML
-    public void backHandler(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/example/connectverseproject/home.fxml"));
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));
-        stage.show();
-    }
-    @FXML
     private ListView<Node> myprofile;
     @FXML
     private Label lfolowing;
@@ -47,8 +40,15 @@ public class myprofile {
     private Label tfollowers;
     @FXML
     private Label about;
-@FXML
-public void myProfile() {
+    @FXML
+    public void backHandler(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/com/example/connectverseproject/home.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+      @FXML
+         public void myProfile() {
     user currentUser = AppData.getCurrentUser();
     profileuser.setText(currentUser.getName());
     int totalfollowers=AppData.graph.get(currentUser.getId()).size();
@@ -120,9 +120,7 @@ public void myProfile() {
 
         try (Connection conn = dbconnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
-
             stmt.setInt(1, postId);
-          //  stmt.setInt(2, friendId);
             stmt.executeUpdate();
             System.out.println("removed");
 

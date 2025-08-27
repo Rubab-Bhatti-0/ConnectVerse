@@ -1,21 +1,16 @@
 
+// load all data fom database
 
 package com.example.connectverseproject;
-
-
-import eu.hansolo.toolbox.time.DateTimes;
-
 import java.sql.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.Date;
-
 public class DataLoader {
     public static void loadAllData() {
         Map<Integer, user> userMap = new HashMap<>();
-
+       // hashMap<String,user> userMap=new hashMap<>();
         try (Connection conn = dbconnection.getConnection()) {
             // Load users
             ResultSet rs = conn.prepareStatement("SELECT * FROM signup").executeQuery();
@@ -43,6 +38,7 @@ public class DataLoader {
                     userMap.get(userId).addPost(p);
                     AppData.totalPosts++;
                 }
+
             }
             AppData.allUsers = userMap;
             int maxUserId = Collections.max(userMap.keySet());
@@ -85,8 +81,8 @@ public class DataLoader {
         String sql = "INSERT INTO post_likes (post_id, user_id) VALUES (?, ?)";
         Connection conn = dbconnection.getConnection();
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, postId);   // FK → posts.idposts
-            stmt.setInt(2, userId);   // FK → signup.idsignup
+            stmt.setInt(1, postId);
+            stmt.setInt(2, userId);
             stmt.executeUpdate();
             return true;
         } catch (SQLIntegrityConstraintViolationException e) {

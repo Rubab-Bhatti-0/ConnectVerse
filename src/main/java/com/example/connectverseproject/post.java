@@ -26,7 +26,6 @@ public class post implements Comparable<post> {
 
     // Getters
     public int getLikes() { return this.likes; }
-    //public boolean getisLike() { return this.isLike; }
     public String getContent() { return content; }
     public String getInterest() { return interest; }
     public LocalDateTime getDatetime() { return datetime; }
@@ -34,7 +33,6 @@ public class post implements Comparable<post> {
     public void setOwner(int o) { owner=o; }
     @Override
     public int compareTo(post other) {
-        // Latest post should come first → descending order
         return other.getDatetime().compareTo(this.datetime);
     }
 }

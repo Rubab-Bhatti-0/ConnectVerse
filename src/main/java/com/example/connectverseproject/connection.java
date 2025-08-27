@@ -1,6 +1,3 @@
-
-
-
 package com.example.connectverseproject;
 import javafx.geometry.Pos;
 import javafx.scene.layout.Priority;
@@ -39,7 +36,12 @@ public class connection {
     private ImageView Search;
     @FXML
     private ListView<HBox> suggestionList;
-
+    @FXML
+    private Button followingb;
+    @FXML
+    private Button followersb;
+    @FXML
+    private Button suggestionB;
     @FXML
     public void initialize() {
         // Load the image from resources
@@ -143,14 +145,6 @@ public class connection {
         stage.setScene(new Scene(root));
         stage.show();
     }
-
-
-    @FXML
-    private Button followingb;
-    @FXML
-    private Button followersb;
-    @FXML
-    private Button suggestionB;
 
     @FXML
     public void following() {

@@ -93,17 +93,17 @@ public class signup {
 
         for (user u : AppData.allUsers.values()) {
             if (u.getName().equalsIgnoreCase(username)) {
-                AppData.showAlert(Alert.AlertType.WARNING,"Username Error","⚠️ Username already exists. Try another.");
+                AppData.showAlert(Alert.AlertType.WARNING,"Username Exists","⚠️ Username already exists. Try another.");
                 return;
             }
             if (u.getPassword().equals(password)) {
-                AppData.showAlert(Alert.AlertType.WARNING,"Password Error","❌ Password already in use. Choose a different one.");
+                AppData.showAlert(Alert.AlertType.WARNING,"Password Exists","❌ Password already in use. Choose a different one.");
                 return;
             }
         }
 
         if (!isValidPassword(password)) {
-            AppData.showAlert(Alert.AlertType.WARNING,"Password Error","⚠️ Password must be at least 8 characters, include a number, and a special character.");
+            AppData.showAlert(Alert.AlertType.ERROR,"Invalid Password","⚠️ Password must be at least 8 characters, include a number, and a special character.");
             return;
         }
 
