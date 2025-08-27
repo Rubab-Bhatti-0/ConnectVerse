@@ -263,8 +263,10 @@ public class connection {
                     nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
                     nameLabel.setStyle(" -fx-text-fill: #5e35b1;");
                     HBox row = new HBox(10);
-                    row.setPadding(new Insets(5));
+                    row.setPadding(new Insets(8));
+
                     row.getChildren().add(nameLabel);
+                    row.setStyle("-fx-border-color:#1976D2; -fx-background-color: white;");
                     // Check if current user already follows this follower
                     boolean alreadyFollowing = false;
                     ArrayList<Edge> myEdges = AppData.graph.get(currentUser.getId());
@@ -279,16 +281,20 @@ public class connection {
 
                     if (!alreadyFollowing) {
                         Button followBackBtn = new Button("Follow Back");
+                        followBackBtn.setStyle("-fx-background-color: #6F42C1; -fx-text-fill: #FFFFFF;");
                         followBackBtn.setOnAction(e -> {
                             AppData.creategraph(currentUser.getId(), follower.getId());
                             addFriendToDatabase(currentUser.getId(), follower.getId());
                             showAlert(Alert.AlertType.INFORMATION, "Friend Added", follower.getName() + " has been added to your following.");
                             followBackBtn.setDisable(true);
                             followBackBtn.setText("Followed");
+                            followBackBtn.setStyle("-fx-background-color: #28A745; -fx-text-fill: #FFFFFF;");
+
                         });
                         row.getChildren().add(followBackBtn);
                     } else {
                         Label followedLabel = new Label("Followed");
+                        followedLabel.setStyle("-fx-background-color: #28A745; -fx-text-fill: #FFFFFF;");
                         row.getChildren().add(followedLabel);
                     }
 
@@ -371,7 +377,7 @@ public class connection {
         HBox row = new HBox(10);
         row.setPadding(new Insets(5));
         row.setAlignment(Pos.CENTER_LEFT);
-
+        row.setStyle("-fx-border-color:#1976D2; -fx-background-color: white;");
         VBox infoBox = new VBox(3);
         Label nameLabel = new Label(suggestedUser.getName());
         nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
@@ -421,9 +427,10 @@ public class connection {
             suggestion(); // Refresh the list
         });
 
+        addButton.setStyle("-fx-background-color: #1DA1F2; -fx-text-fill: #FFFFFF;");
         Button cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> suggestionList.getItems().remove(row));
-
+        cancelButton.setStyle("-fx-background-color: #6C757D; -fx-text-fill: #FFFFFF;");
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 

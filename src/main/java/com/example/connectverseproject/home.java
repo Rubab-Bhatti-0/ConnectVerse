@@ -1,6 +1,7 @@
 
 package com.example.connectverseproject;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -95,13 +97,17 @@ public class home {
         addTooltip(myProfileButton,   "My Profile");
         addTooltip(settingsButton,    "Settings");
         feedchoicebox.setItems(FXCollections.observableArrayList("All","Education", "Entertainment", "Sports","Others"));
-        feedchoicebox.setValue("Select choice!");
+        feedchoicebox.setValue("All");
+        personalizedFeed("All");
         feedchoicebox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && !newVal.equals("Select choice!")) {
-                personalizedFeed();
-            } else {
-                showFeed();
-            }
+
+            String selectedInterest = feedchoicebox.getValue().trim();
+            personalizedFeed(selectedInterest);
+//            if (newVal != null && !newVal.equals("Select choice!")) {
+//                personalizedFeed(selectedInterest);
+//            } else {
+//                showFeed();
+//            }
         });
 
 
@@ -153,17 +159,19 @@ public class home {
                 String timestamp = currentdate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
                 try (Connection conn = dbconnection.getConnection()) {
-                    String sql = "INSERT INTO posts (userid, content,interest,timestamp ) VALUES (?, ?, ?, ?)";
+                    String sql = "INSERT INTO posts (userid, content,interest,timestamp ,likes) VALUES (?, ?, ?, ?,?)";
                     PreparedStatement stmt = conn.prepareStatement(sql);
                     stmt.setInt(1, AppData.getCurrentUser().getId());
                     stmt.setString(2, content);
                     stmt.setString(3, category);
                     stmt.setString(4, timestamp);
+                    stmt.setInt(5, 0);
+
                     stmt.executeUpdate();
 
-                    // Update current user's post list in memory
-                    //post newPost = new post(content, category, currentdate);
-                 //   AppData.getCurrentUser().addPost(newPost);
+                     //Update current user's post list in memory
+                    post newPost = new post(content, category, currentdate);
+                    AppData.getCurrentUser().addPost(newPost);
 
                     showAlert(Alert.AlertType.INFORMATION, "Success", "✅ Post submitted successfully.");
 
@@ -177,6 +185,8 @@ public class home {
 
         dialog.showAndWait();
     }
+
+
 
     @FXML
     public void switchToConnections(ActionEvent event) throws IOException {
@@ -249,7 +259,7 @@ public class home {
            for (post p : posts) {
                if (p != null){
                    //   pq.add(p);
-                   p.setOwner(friend.getName());
+                   p.setOwner(friend.getId());
                    queue.feed_by_Priority(p);
 
                }
@@ -270,21 +280,62 @@ public class home {
                 postBox.setPadding(new Insets(10));
                 postBox.setStyle("-fx-border-color: #ccc; " + "-fx-border-radius: 5; " + "-fx-background-color: #fefefe; " + "-fx-background-radius: 5;");
                 postBox.setMaxWidth(300);
-
-                Label friendLabel = new Label(p.getowner() != null ? p.getowner() : "Unknown");
+                 String name=AppData.allUsers.get(p.getowner()).getName();
+                Label friendLabel = new Label(name != null ? name : "Unknown");
                 friendLabel.setStyle("-fx-font-weight: bold; -fx-font-style: italic; -fx-font-size: 14px; -fx-text-fill: #1976D2;");
 
-                Label contentLabel = new Label(p.getContent() != null ? p.getContent() : "");
+                Label contentLabel = new Label(p.getContent() != null ? p.getContent() : "No content");
                 contentLabel.setWrapText(true);
                 contentLabel.setMaxWidth(240);
                 contentLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #555;");
 
-                Label dateTimeLabel = new Label(p.getDatetime().toString() != null ? p.getDatetime().toString() : "");
-                dateTimeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: gray;");
+                String posting_dt=DataLoader.postTime(p.getDatetime());
+                Label dateTimeLabel = new Label(posting_dt != null ?  posting_dt : "No Time");
+                dateTimeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #5e35b1;");
                 HBox timeBox = new HBox(dateTimeLabel);
                 timeBox.setAlignment(Pos.CENTER_RIGHT);
 
-                postBox.getChildren().addAll(friendLabel, contentLabel, timeBox);
+
+                // Like button (using heart emoji ❤️ or ♥)
+                Button likeButton = new Button("❤");
+                likeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14; -fx-text-fill: #5e35b1;");
+
+
+                int likeCount = DataLoader.getLikeCount(p.getowner()); // from DB
+
+                String l=likeCount==1?" like":" likes";
+                Label likeCountLabel = new Label(String.valueOf(likeCount)+l);
+                likeCountLabel.setStyle("-fx-font-size: 12; -fx-text-fill: #5e35b1;");
+
+                post finalP = p;
+                likeButton.setOnAction(e -> {
+                  // int postId= AppData.allUsers.get(finalP.getowner()).getId();
+                    DataLoader.toggleLike(finalP.getowner(), AppData.currentUser.getId());
+
+                    // Update count
+                    int updatedCount = DataLoader.getLikeCount(finalP.getowner());
+                   String k=updatedCount==1?" like":" likes";
+                    likeCountLabel.setText(String.valueOf(updatedCount)+k);
+
+                    // Change heart color
+                    if (DataLoader.hasUserLiked(finalP.getowner(), AppData.currentUser.getId())) {
+                        likeButton.setText("🤍"); //
+                    } else {
+                        //likeButton.setText("❤");
+                        likeButton.setText("❤️");
+                    }
+                });
+                // Bottom row → likes left, date right
+                HBox bottomRow = new HBox(10, likeButton, likeCountLabel);
+                bottomRow.setAlignment(Pos.CENTER_LEFT);
+                bottomRow.setSpacing(10);
+
+
+                HBox likeRow = new HBox(5, likeButton, bottomRow);
+                likeRow.setAlignment(Pos.CENTER_LEFT);
+
+
+                postBox.getChildren().addAll(friendLabel, contentLabel, likeRow,timeBox);
                 listviewhome.getItems().add(postBox);
 
             }
@@ -292,13 +343,13 @@ public class home {
 
 
     @FXML
-    private void personalizedFeed() {
+    private void personalizedFeed(String s) {
 
         priorityQueue queue=new priorityQueue();
         feed(queue);
 
-        String selectedInterest = feedchoicebox.getValue().trim();
-        if (selectedInterest.equalsIgnoreCase("All")) {
+
+        if (s.equalsIgnoreCase("All")) {
             showFeed();
             return;
         }
@@ -308,14 +359,14 @@ public class home {
         while (!queue.isEmpty()) {
             p=queue.poll();
                 if (p == null || p.getInterest() == null) continue;
-                if (!p.getInterest().equalsIgnoreCase(selectedInterest)) continue;
+                if (!p.getInterest().equalsIgnoreCase(s)) continue;
 
                 VBox postBox = new VBox(5);
                 postBox.setPadding(new Insets(10));
                 postBox.setStyle("-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-color: #fefefe; -fx-background-radius: 5;");
                 postBox.setMaxWidth(300);
-
-                Label friendLabel = new Label(p.getowner()!= null ? p.getowner() : "Unknown");
+            String name=AppData.allUsers.get(p.getowner()).getName();
+                Label friendLabel = new Label(name != null ? name: "Unknown");
                 friendLabel.setStyle("-fx-font-weight: bold; -fx-font-style: italic; -fx-font-size: 14px; -fx-text-fill: #1976D2;");
 
                 Label contentLabel = new Label(p.getContent() != null ? p.getContent() : "");
@@ -323,12 +374,49 @@ public class home {
                 contentLabel.setMaxWidth(250);
                 contentLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #555;");
 
-                Label dateTimeLabel = new Label(p.getDatetime() != null ? p.getDatetime().toString() : "");
-                dateTimeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: gray;");
+                String posting_dt=DataLoader.postTime(p.getDatetime());
+                Label dateTimeLabel = new Label(posting_dt != null ?  posting_dt : "");
+                dateTimeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #5e35b1;");
                 HBox timeBox = new HBox(dateTimeLabel);
                 timeBox.setAlignment(Pos.CENTER_RIGHT);
 
-                postBox.getChildren().addAll(friendLabel, contentLabel, timeBox);
+            // Like button (using heart emoji ❤️ or ♥)
+            Button likeButton = new Button("❤");
+            likeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14; -fx-text-fill: #5e35b1;");
+
+
+            int likeCount = DataLoader.getLikeCount(p.getowner()); // from DB
+
+            String l=likeCount==1?" like":" likes";
+            Label likeCountLabel = new Label(String.valueOf(likeCount)+l);
+            likeCountLabel.setStyle("-fx-font-size: 12; -fx-text-fill: #5e35b1;");
+
+            post finalP = p;
+            likeButton.setOnAction(e -> {
+                DataLoader.toggleLike(finalP.getowner(), AppData.currentUser.getId());
+
+                // Update count
+                int updatedCount = DataLoader.getLikeCount(finalP.getowner());
+                String k=updatedCount==1?" like":" likes";
+                likeCountLabel.setText(String.valueOf(updatedCount)+k);
+
+                // Change heart color
+                if (DataLoader.hasUserLiked(finalP.getowner(), AppData.currentUser.getId())) {
+                    likeButton.setText("🤍"); //
+                } else {
+                    //likeButton.setText("❤");
+                    likeButton.setText("❤️");
+                }
+            });
+            HBox bottomRow = new HBox(10, likeButton, likeCountLabel);
+            bottomRow.setAlignment(Pos.CENTER_LEFT);
+            bottomRow.setSpacing(10);
+
+
+            HBox likeRow = new HBox(5, likeButton, bottomRow);
+            likeRow.setAlignment(Pos.CENTER_LEFT);
+
+                postBox.getChildren().addAll(friendLabel, contentLabel, timeBox,likeRow);
                 listviewhome.getItems().add(postBox);
             }
         }

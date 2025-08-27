@@ -8,8 +8,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -62,13 +65,48 @@ public void myProfile() {
         contentLabel.setStyle("-fx-font-size: 13; -fx-text-fill: #555;");
         contentLabel.setMaxWidth(270); // Adjust width if needed
 
-        // Post date/time
-        Label dateTimeLabel = new Label(p.getDatetime() != null ? p.getDatetime().toString() : "");
-        dateTimeLabel.setStyle("-fx-font-size: 11; -fx-text-fill: gray;");
+        String posting_dt=DataLoader.postTime(p.getDatetime());
+        Label dateTimeLabel = new Label(posting_dt != null ?  posting_dt : "");
+        dateTimeLabel.setStyle("-fx-font-size: 11; -fx-text-fill: #5e35b1;");
         HBox timeBox = new HBox(dateTimeLabel);
         timeBox.setAlignment(Pos.CENTER_RIGHT);
 
-        postBox.getChildren().addAll(contentLabel, timeBox);
+//        ImageView photo=new ImageView();
+//        Image logo = new Image(getClass().getResource("/photos/del.png").toExternalForm());
+//        photo.setImage(logo);
+//        Button deletepost=new Button();
+//        deletepost.
+//        deletepost.setText();
+//        deletepost.setStyle("-fx-font-size: 14; -fx-font-weight: bold; -fx-background-color: #E53935; -fx-text-fill: bold white;");
+//        HBox delBox = new HBox(deletepost);
+//        delBox.setAlignment(Pos.BOTTOM_RIGHT);
+//
+        ImageView photo = new ImageView(new Image(getClass().getResource("/photos/del.png").toExternalForm()));
+
+        photo.setFitHeight(20);
+        photo.setFitWidth(20);
+        photo.setPreserveRatio(true);
+
+        Button deletePost = new Button();
+        deletePost.setGraphic(photo);  // set image as button graphic
+
+        deletePost.setStyle("-fx-background-color: white; " + "-fx-background-radius: 8; " +  "-fx-padding: 6; " +   "-fx-cursor: hand;");
+
+        deletePost.setOnAction(e -> {
+            System.out.println("Delete button clicked!");
+        });
+        HBox delBox = new HBox(deletePost);
+        delBox.setAlignment(Pos.TOP_RIGHT);
+
+
+
+        int likeCount = DataLoader.getLikeCount(AppData.getCurrentUser().getId());
+        String l=likeCount==1?" like":" likes";// from DB
+        Label likeCountLabel = new Label(String.valueOf(likeCount)+l);
+        likeCountLabel.setStyle("-fx-font-size: 12; -fx-text-fill: #5e35b1;");
+        likeCountLabel.setAlignment(Pos.CENTER_LEFT);
+
+        postBox.getChildren().addAll(contentLabel, timeBox,likeCountLabel,delBox);
 
         myprofile.getItems().add(postBox);
     }

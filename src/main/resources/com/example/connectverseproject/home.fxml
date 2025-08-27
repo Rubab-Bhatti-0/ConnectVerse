@@ -72,7 +72,7 @@
                 <!-- Optional feed choice box -->
                 <VBox fx:id="feedbox" layoutX="10.0" layoutY="10.0" prefHeight="40.0" prefWidth="150.0" visible="false">
                     <children>
-                        <ChoiceBox fx:id="feedchoicebox" onMouseClicked="#personalizedFeed" prefWidth="150.0" />
+                        <ChoiceBox fx:id="feedchoicebox"  prefWidth="150.0" />
                     </children>
                 </VBox>
             </children>
