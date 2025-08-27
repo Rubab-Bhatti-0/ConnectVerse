@@ -75,19 +75,19 @@ public class connection {
                 String inputName = friendField.getText().trim();
 
                 if (inputName.isEmpty()) {
-                    showAlert(Alert.AlertType.ERROR, "Validation Error", "Friend name cannot be empty.");
+                    AppData.showAlert(Alert.AlertType.ERROR, "Validation Error", "Friend name cannot be empty.");
                     return null;
                 }
 
                 if (inputName.equalsIgnoreCase(currentUsername)) {
-                    showAlert(Alert.AlertType.ERROR, "Validation Error", "You cannot add yourself as a friend.");
+                    AppData.showAlert(Alert.AlertType.ERROR, "Validation Error", "You cannot add yourself as a friend.");
                     return null;
                 }
 
                 // Check if already a friend
                 for (Edge edge : edges) {
                     if (edge.dest.getName().equalsIgnoreCase(inputName)) {
-                        showAlert(Alert.AlertType.ERROR, "Already a Friend", inputName + " is already your friend.");
+                        AppData.showAlert(Alert.AlertType.ERROR, "Already a Friend", inputName + " is already your friend.");
                         return null;
                     }
                 }
@@ -102,7 +102,7 @@ public class connection {
                 }
 
                 if (friendUser == null) {
-                    showAlert(Alert.AlertType.ERROR, "User Not Found", "No user found with name: " + inputName);
+                    AppData.showAlert(Alert.AlertType.ERROR, "User Not Found", "No user found with name: " + inputName);
                     return null;
                 }
 
@@ -110,7 +110,7 @@ public class connection {
                 AppData.creategraph(currentUser.getId(), friendUser.getId()); // Add edge
                 addFriendToDatabase(currentUser.getId(), friendUser.getId()); // Insert into DB
                 following();
-                showAlert(Alert.AlertType.INFORMATION, "Success", inputName + " added to your friends list.");
+                AppData.showAlert(Alert.AlertType.INFORMATION, "Success", inputName + " added to your friends list.");
             }
             return null;
         });
@@ -131,18 +131,10 @@ public class connection {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to add friend to database.");
+            AppData.showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to add friend to database.");
         }
     }
 
-
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
 
     @FXML
     public void backHandler(ActionEvent event) throws IOException {
@@ -208,7 +200,7 @@ public class connection {
             removeButton.setOnAction(e -> {
                 AppData.endfriendship(currentUser.getId(), friend.getName(), currentUser.getName());
                 removeFriendFromDatabase(currentUser.getId(), friend.getId());
-                showAlert(Alert.AlertType.INFORMATION, "Friend Removed", friend.getName() + " has been unfollowed.");
+                AppData.showAlert(Alert.AlertType.INFORMATION, "Friend Removed", friend.getName() + " has been unfollowed.");
                 displayFollowing(); // Refresh
             });
 
@@ -230,7 +222,7 @@ public class connection {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to remove friend from database.");
+            AppData.showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to remove friend from database.");
         }
     }
 
@@ -285,7 +277,7 @@ public class connection {
                         followBackBtn.setOnAction(e -> {
                             AppData.creategraph(currentUser.getId(), follower.getId());
                             addFriendToDatabase(currentUser.getId(), follower.getId());
-                            showAlert(Alert.AlertType.INFORMATION, "Friend Added", follower.getName() + " has been added to your following.");
+                            AppData.showAlert(Alert.AlertType.INFORMATION, "Friend Added", follower.getName() + " has been added to your following.");
                             followBackBtn.setDisable(true);
                             followBackBtn.setText("Followed");
                             followBackBtn.setStyle("-fx-background-color: #28A745; -fx-text-fill: #FFFFFF;");
@@ -423,7 +415,7 @@ public class connection {
         addButton.setOnAction(e -> {
             AppData.creategraph(currentUser.getId(), suggestedUser.getId());
             addFriendToDatabase(currentUser.getId(), suggestedUser.getId());
-            showAlert(Alert.AlertType.INFORMATION, "Friend Added", suggestedUser.getName() + " is now your friend.");
+            AppData.showAlert(Alert.AlertType.INFORMATION, "Friend Added", suggestedUser.getName() + " is now your friend.");
             suggestion(); // Refresh the list
         });
 

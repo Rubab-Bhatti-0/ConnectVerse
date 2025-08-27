@@ -68,7 +68,7 @@ public class HelloController {
         String username = usernameField.getText();
         String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
         if (username.isEmpty() || password.isEmpty()) {
-            showAlert("Login Failed", "⚠️ Please enter username and password.");
+            AppData.showAlert(Alert.AlertType.ERROR,"Login Failed", "⚠️ Please enter username and password.");
             return;
         }
 
@@ -87,12 +87,12 @@ public class HelloController {
         }
 
         if (matchedUser == null) {
-            showAlert("Login Failed", "❌ Username not found.");
+            AppData.showAlert(Alert.AlertType.ERROR,"Login Failed", "❌ Username not found.");
         } else if (!matchedUser.getPassword().equals(password)) {
-            showAlert("Login Failed", "❌ Incorrect password.");
+            AppData.showAlert(Alert.AlertType.ERROR,"Login Failed", "❌ Incorrect password.");
         } else {
             AppData.setCurrentUser(matchedUser);
-            showAlert("Login Success", "✅ Login successful.");
+            AppData.showAlert(Alert.AlertType.INFORMATION,"Login Success", "✅ Login successful.");
             switchToHome(event);
         }
     }
@@ -111,13 +111,6 @@ public class HelloController {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root));
         stage.show();
-    }
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
 

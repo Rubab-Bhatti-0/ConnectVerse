@@ -32,12 +32,13 @@ public class DataLoader {
             rs = conn.prepareStatement("SELECT * FROM posts").executeQuery();
             while (rs.next()) {
                 int userId = rs.getInt("userid");
+                int postId=rs.getInt("idposts");
                 String content = rs.getString("content");
                 String category = rs.getString("interest");
                Timestamp date= rs.getTimestamp("timestamp");
                LocalDateTime local=date.toLocalDateTime();
 
-                post p = new post(content, category, local);
+                post p = new post(postId,content, category, local);
                 if (userMap.containsKey(userId)) {
                     userMap.get(userId).addPost(p);
                     AppData.totalPosts++;
@@ -89,8 +90,6 @@ public class DataLoader {
             stmt.executeUpdate();
             return true;
         } catch (SQLIntegrityConstraintViolationException e) {
-            // This happens if FK fails or duplicate like
-            System.out.println("User " + userId + " already liked or invalid post_id/user_id");
             return false;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -114,10 +113,9 @@ public class DataLoader {
     public static void toggleLike(int postId, int userId) {
         if (hasUserLiked(postId, userId)) {
             unlikePost(postId, userId);
-            System.out.println("Unliked post " + postId);
+
         } else {
             likePost(postId, userId);
-            System.out.println("Liked post " + postId);
         }
     }
 
@@ -153,7 +151,7 @@ public class DataLoader {
             return minutes+" minute ago";
         }
         else if(hours<24){
-            return hours+" ago";
+            return hours+" hours ago";
         } else  return  months<12?  pt.format(DateTimeFormatter.ofPattern("dd MMMM")): "at "+pt.format(DateTimeFormatter.ofPattern("dd MMMM YYYY"));
 
 

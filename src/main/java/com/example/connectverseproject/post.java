@@ -1,20 +1,22 @@
 
 package com.example.connectverseproject;
-
-import eu.hansolo.toolbox.time.DateTimes;
-
-import java.security.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
 
 public class post implements Comparable<post> {
+    int postId;
     private String content;
     private String interest;
     private LocalDateTime datetime;
     private int owner;
     int likes;
 
+    public post(int postId,String content, String interest, LocalDateTime datetime) {
+        this.content = content;
+        this.postId=postId;
+        this.interest = interest;
+        this.datetime = datetime;
+
+    }
     public post(String content, String interest, LocalDateTime datetime) {
         this.content = content;
         this.interest = interest;

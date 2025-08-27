@@ -8,16 +8,21 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class myprofile {
     public void initialize() {
@@ -71,46 +76,60 @@ public void myProfile() {
         HBox timeBox = new HBox(dateTimeLabel);
         timeBox.setAlignment(Pos.CENTER_RIGHT);
 
-//        ImageView photo=new ImageView();
-//        Image logo = new Image(getClass().getResource("/photos/del.png").toExternalForm());
-//        photo.setImage(logo);
-//        Button deletepost=new Button();
-//        deletepost.
-//        deletepost.setText();
-//        deletepost.setStyle("-fx-font-size: 14; -fx-font-weight: bold; -fx-background-color: #E53935; -fx-text-fill: bold white;");
-//        HBox delBox = new HBox(deletepost);
-//        delBox.setAlignment(Pos.BOTTOM_RIGHT);
-//
-        ImageView photo = new ImageView(new Image(getClass().getResource("/photos/del.png").toExternalForm()));
 
+        ImageView photo = new ImageView(new Image(getClass().getResource("/photos/del.png").toExternalForm()));
         photo.setFitHeight(20);
         photo.setFitWidth(20);
         photo.setPreserveRatio(true);
-
         Button deletePost = new Button();
         deletePost.setGraphic(photo);  // set image as button graphic
 
         deletePost.setStyle("-fx-background-color: white; " + "-fx-background-radius: 8; " +  "-fx-padding: 6; " +   "-fx-cursor: hand;");
 
         deletePost.setOnAction(e -> {
-            System.out.println("Delete button clicked!");
+            myprofile.getItems().remove(postBox);
+            AppData.currentUser.getPosts().remove(p);
+           // AppData.allUsers.get(p.getowner()).getPosts().remove(p);
+            removePostFromDatabase(p.postId);
+
+
         });
         HBox delBox = new HBox(deletePost);
         delBox.setAlignment(Pos.TOP_RIGHT);
 
 
-
+        ImageView whiteHeart = new ImageView(new Image(getClass().getResource("/photos/whiteHeart.jpg").toExternalForm()));
+        whiteHeart .setFitHeight(16);
+        whiteHeart .setFitWidth(16);
+        whiteHeart .setPreserveRatio(true);
         int likeCount = DataLoader.getLikeCount(AppData.getCurrentUser().getId());
         String l=likeCount==1?" like":" likes";// from DB
         Label likeCountLabel = new Label(String.valueOf(likeCount)+l);
         likeCountLabel.setStyle("-fx-font-size: 12; -fx-text-fill: #5e35b1;");
-        likeCountLabel.setAlignment(Pos.CENTER_LEFT);
+       // likeCountLabel.setAlignment(Pos.CENTER_LEFT);
+        HBox likeBox = new HBox(whiteHeart,likeCountLabel);
+        likeBox.setAlignment(Pos.CENTER_LEFT);
 
-        postBox.getChildren().addAll(contentLabel, timeBox,likeCountLabel,delBox);
+        postBox.getChildren().addAll(contentLabel, timeBox,likeBox,delBox);
 
         myprofile.getItems().add(postBox);
     }
 }
+    private void removePostFromDatabase(int postId) {
+        String deleteQuery = "DELETE FROM posts WHERE idposts = ?";
 
+        try (Connection conn = dbconnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
+
+            stmt.setInt(1, postId);
+          //  stmt.setInt(2, friendId);
+            stmt.executeUpdate();
+            System.out.println("removed");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            AppData.showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to remove friend from database.");
+        }
+    }
 }
 

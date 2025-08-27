@@ -1,6 +1,8 @@
 
 package com.example.connectverseproject;
 
+import javafx.scene.control.Alert;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +61,13 @@ public class AppData {
            }
        }
    }
+    public static void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 
 
 

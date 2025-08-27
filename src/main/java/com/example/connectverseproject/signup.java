@@ -87,23 +87,23 @@ public class signup {
         String about = "";
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            showAlert("⚠️ Please fill in all fields.");
+            AppData.showAlert(Alert.AlertType.ERROR,"","⚠️ Please fill in all fields.");
             return;
         }
 
         for (user u : AppData.allUsers.values()) {
             if (u.getName().equalsIgnoreCase(username)) {
-                showAlert("⚠️ Username already exists. Try another.");
+                AppData.showAlert(Alert.AlertType.WARNING,"Username Error","⚠️ Username already exists. Try another.");
                 return;
             }
             if (u.getPassword().equals(password)) {
-                showAlert("❌ Password already in use. Choose a different one.");
+                AppData.showAlert(Alert.AlertType.WARNING,"Password Error","❌ Password already in use. Choose a different one.");
                 return;
             }
         }
 
         if (!isValidPassword(password)) {
-            showAlert("⚠️ Password must be at least 8 characters, include a number, and a special character.");
+            AppData.showAlert(Alert.AlertType.WARNING,"Password Error","⚠️ Password must be at least 8 characters, include a number, and a special character.");
             return;
         }
 
@@ -117,14 +117,14 @@ public class signup {
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                showAlert("✅ Signup successful!");
+                AppData.showAlert(Alert.AlertType.INFORMATION,"Signup Success","✅ Signup successful!");
                 goToLogin(event);
             } else {
-                showAlert("❌ Signup failed.");
+                AppData.showAlert(Alert.AlertType.ERROR,"Signup failed","❌ Signup failed.");
             }
 
         } catch (Exception e) {
-            showAlert("❌ Database Error: " + e.getMessage());
+            AppData.showAlert(Alert.AlertType.ERROR,"❌ Database Error " , e.getMessage());
             e.printStackTrace();
         }
     }
@@ -136,13 +136,6 @@ public class signup {
         return hasLength && hasSpecial && hasDigit;
     }
 
-    private void showAlert(String msg) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Signup Status");
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
-    }
 
     @FXML
     public void goToLogin(ActionEvent event) throws IOException {

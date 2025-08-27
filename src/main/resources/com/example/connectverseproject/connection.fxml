@@ -20,16 +20,16 @@
         <AnchorPane layoutX="19.0" layoutY="65.0" prefHeight="427.0" prefWidth="325.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%,  #64B5F6,#5E35B1); -fx-background-radius: 20;">
             <children>
                 <!-- Search Field -->
-                <Button fx:id="search" alignment="TOP_LEFT" layoutX="45.0" layoutY="10.0" mnemonicParsing="false" onAction="#addfriend" prefHeight="34.0" prefWidth="270.0" style="-fx-background-color: white; -fx-border-color: #1976D2; -fx-background-radius: 20; -fx-border-radius: 20;" text="Search" textFill="#1976D2">
+                <Button fx:id="search" alignment="TOP_LEFT" layoutX="53.0" layoutY="10.0" mnemonicParsing="false" onAction="#addfriend" prefHeight="34.0" prefWidth="269.0" style="-fx-background-color: white; -fx-border-color: #1976D2; -fx-background-radius: 20; -fx-border-radius: 20;" text="Search" textFill="#1976D2">
                     <font>
                         <Font size="14.0" />
                     </font>
                 </Button>
 
                 <!-- Search Icon Button -->
-                <Button layoutX="-4.0" layoutY="10.0" mnemonicParsing="false" onAction="#addfriend" prefHeight="34.0" prefWidth="54.0" style="-fx-background-color: white; -fx-border-color: #1976D2; -fx-background-radius: 20; -fx-border-radius: 20;">
+                <Button layoutX="4.0" layoutY="10.0" mnemonicParsing="false" onAction="#addfriend" prefHeight="34.0" prefWidth="52.0" style="-fx-background-color: white; -fx-border-color: #1976D2; -fx-background-radius: 20; -fx-border-radius: 20;">
                     <graphic>
-                        <ImageView fx:id="Search" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="Search" fitHeight="22.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" />
                     </graphic>
                 </Button>
 

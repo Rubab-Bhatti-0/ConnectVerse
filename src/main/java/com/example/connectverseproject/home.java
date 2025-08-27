@@ -173,11 +173,11 @@ public class home {
                     post newPost = new post(content, category, currentdate);
                     AppData.getCurrentUser().addPost(newPost);
 
-                    showAlert(Alert.AlertType.INFORMATION, "Success", "✅ Post submitted successfully.");
+                    AppData.showAlert(Alert.AlertType.INFORMATION, "Success", "✅ Post submitted successfully.");
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    showAlert(Alert.AlertType.ERROR, "Database Error", "❌ Failed to save post.");
+                    AppData.showAlert(Alert.AlertType.ERROR, "Database Error", "❌ Failed to save post.");
                 }
             }
             return null;
@@ -296,9 +296,24 @@ public class home {
                 timeBox.setAlignment(Pos.CENTER_RIGHT);
 
 
-                // Like button (using heart emoji ❤️ or ♥)
-                Button likeButton = new Button("❤");
-                likeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14; -fx-text-fill: #5e35b1;");
+
+                ImageView photo = new ImageView(new Image(getClass().getResource("/photos/purpleHeart.png").toExternalForm()));
+                photo.setFitHeight(20);
+                photo.setFitWidth(20);
+                photo.setPreserveRatio(true);
+                ImageView whiteHeart = new ImageView(new Image(getClass().getResource("/photos/whiteHeart.jpg").toExternalForm()));
+                whiteHeart .setFitHeight(14);
+                whiteHeart .setFitWidth(14);
+                whiteHeart .setPreserveRatio(true);
+                Button likeButton = new Button();
+                if (DataLoader.hasUserLiked(p.getowner(), AppData.currentUser.getId())) {
+                    likeButton.setGraphic(photo);//
+                } else {
+                    //likeButton.setText("❤");
+                    likeButton.setGraphic(whiteHeart);
+                }
+
+                likeButton.setStyle("-fx-background-color: white; " + "-fx-background-radius: 8; " +  "-fx-padding: 6; " +   "-fx-cursor: hand;");
 
 
                 int likeCount = DataLoader.getLikeCount(p.getowner()); // from DB
@@ -309,20 +324,17 @@ public class home {
 
                 post finalP = p;
                 likeButton.setOnAction(e -> {
-                  // int postId= AppData.allUsers.get(finalP.getowner()).getId();
                     DataLoader.toggleLike(finalP.getowner(), AppData.currentUser.getId());
-
-                    // Update count
                     int updatedCount = DataLoader.getLikeCount(finalP.getowner());
                    String k=updatedCount==1?" like":" likes";
                     likeCountLabel.setText(String.valueOf(updatedCount)+k);
 
                     // Change heart color
                     if (DataLoader.hasUserLiked(finalP.getowner(), AppData.currentUser.getId())) {
-                        likeButton.setText("🤍"); //
+                        likeButton.setGraphic(photo);//
                     } else {
                         //likeButton.setText("❤");
-                        likeButton.setText("❤️");
+                        likeButton.setGraphic(whiteHeart);//
                     }
                 });
                 // Bottom row → likes left, date right
@@ -381,9 +393,24 @@ public class home {
                 timeBox.setAlignment(Pos.CENTER_RIGHT);
 
             // Like button (using heart emoji ❤️ or ♥)
-            Button likeButton = new Button("❤");
-            likeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14; -fx-text-fill: #5e35b1;");
 
+            ImageView photo = new ImageView(new Image(getClass().getResource("/photos/purpleHeart.png").toExternalForm()));
+            photo.setFitHeight(20);
+            photo.setFitWidth(20);
+            photo.setPreserveRatio(true);
+            ImageView whiteHeart = new ImageView(new Image(getClass().getResource("/photos/whiteHeart.jpg").toExternalForm()));
+            whiteHeart .setFitHeight(14);
+            whiteHeart .setFitWidth(14);
+            whiteHeart .setPreserveRatio(true);
+            Button likeButton = new Button();
+            if (DataLoader.hasUserLiked(p.getowner(), AppData.currentUser.getId())) {
+                likeButton.setGraphic(photo);//
+            } else {
+                //likeButton.setText("❤");
+                likeButton.setGraphic(whiteHeart);
+            }
+            likeButton.setStyle("-fx-background-color: white; " + "-fx-background-radius: 8; " +  "-fx-padding: 6; " +   "-fx-cursor: hand;");
+            // likeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14; -fx-text-fill: #5e35b1;");
 
             int likeCount = DataLoader.getLikeCount(p.getowner()); // from DB
 
@@ -402,10 +429,10 @@ public class home {
 
                 // Change heart color
                 if (DataLoader.hasUserLiked(finalP.getowner(), AppData.currentUser.getId())) {
-                    likeButton.setText("🤍"); //
+                    likeButton.setGraphic(photo);//
                 } else {
                     //likeButton.setText("❤");
-                    likeButton.setText("❤️");
+                    likeButton.setGraphic(whiteHeart);
                 }
             });
             HBox bottomRow = new HBox(10, likeButton, likeCountLabel);
