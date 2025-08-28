@@ -98,19 +98,65 @@ public class myprofile {
         delBox.setAlignment(Pos.TOP_RIGHT);
 
 
+//        ImageView whiteHeart = new ImageView(new Image(getClass().getResource("/photos/whiteHeart.jpg").toExternalForm()));
+//        whiteHeart .setFitHeight(16);
+//        whiteHeart .setFitWidth(16);
+//        whiteHeart .setPreserveRatio(true);
+//        int likeCount = DataLoader.getLikeCount(p.getPostId());
+//        String l=likeCount==1?" like":" likes";// from DB
+//        Label likeCountLabel = new Label(String.valueOf(likeCount)+l);
+//        likeCountLabel.setStyle("-fx-font-size: 12; -fx-text-fill: #5e35b1;");
+//       // likeCountLabel.setAlignment(Pos.CENTER_LEFT);
+//        HBox likeBox = new HBox(whiteHeart,likeCountLabel);
+//        likeBox.setAlignment(Pos.CENTER_LEFT);
+
+        ImageView photo1 = new ImageView(new Image(getClass().getResource("/photos/purpleHeart.png").toExternalForm()));
+        photo1.setFitHeight(20);
+        photo1.setFitWidth(20);
+        photo1.setPreserveRatio(true);
         ImageView whiteHeart = new ImageView(new Image(getClass().getResource("/photos/whiteHeart.jpg").toExternalForm()));
-        whiteHeart .setFitHeight(16);
-        whiteHeart .setFitWidth(16);
+        whiteHeart .setFitHeight(14);
+        whiteHeart .setFitWidth(14);
         whiteHeart .setPreserveRatio(true);
-        int likeCount = DataLoader.getLikeCount(AppData.getCurrentUser().getId());
-        String l=likeCount==1?" like":" likes";// from DB
+        Button likeButton = new Button();
+        if (DataLoader.hasUserLiked(p.getowner(), AppData.currentUser.getId())) {
+            likeButton.setGraphic(photo1);//
+        } else {
+
+            likeButton.setGraphic(whiteHeart);
+        }
+
+        likeButton.setStyle("-fx-background-color: white; " + "-fx-background-radius: 8; " +  "-fx-padding: 6; " +   "-fx-cursor: hand;");
+
+
+        int likeCount = DataLoader.getLikeCount(p.getowner()); // from DB
+
+        String l=likeCount==1?" like":" likes";
         Label likeCountLabel = new Label(String.valueOf(likeCount)+l);
         likeCountLabel.setStyle("-fx-font-size: 12; -fx-text-fill: #5e35b1;");
-       // likeCountLabel.setAlignment(Pos.CENTER_LEFT);
-        HBox likeBox = new HBox(whiteHeart,likeCountLabel);
-        likeBox.setAlignment(Pos.CENTER_LEFT);
 
-        postBox.getChildren().addAll(contentLabel, timeBox,likeBox,delBox);
+        post finalP = p;
+        likeButton.setOnAction(e -> {
+            DataLoader.toggleLike(finalP.getowner(), AppData.currentUser.getId());
+            int updatedCount = DataLoader.getLikeCount(finalP.getowner());
+            String k=updatedCount==1?" like":" likes";
+            likeCountLabel.setText(String.valueOf(updatedCount)+k);
+
+            // Change heart color
+            if (DataLoader.hasUserLiked(finalP.getowner(), AppData.currentUser.getId())) {
+                likeButton.setGraphic(photo1);//
+            } else {
+                //likeButton.setText("❤");
+                likeButton.setGraphic(whiteHeart);//
+            }
+        });
+        // Bottom row → likes left, date right
+        HBox bottomRow = new HBox(10, likeButton, likeCountLabel);
+        bottomRow.setAlignment(Pos.CENTER_LEFT);
+        bottomRow.setSpacing(10);
+
+
+        postBox.getChildren().addAll(contentLabel, timeBox,bottomRow,delBox);
 
         myprofile.getItems().add(postBox);
     }

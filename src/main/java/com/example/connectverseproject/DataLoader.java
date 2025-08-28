@@ -144,12 +144,15 @@ public class DataLoader {
             return "a few seconds ago";
 
         }else if(minutes<60){
-            return minutes+" minute ago";
+            return  minutes==1? minutes+" minute ago":minutes+" minutes ago";
         }
         else if(hours<24){
-            return hours+" hours ago";
-        } else  return  months<12?  pt.format(DateTimeFormatter.ofPattern("dd MMMM")): "at "+pt.format(DateTimeFormatter.ofPattern("dd MMMM YYYY"));
+            return hours==1? hours+" hour ago":hours+" hours ago";
+        }
+        else if (days>=1&&days<=30) {
+            return  days==1? days+" day ago":days+" days ago";
 
+        } else  return  months<12?  pt.format(DateTimeFormatter.ofPattern("dd MMMM")): "at "+pt.format(DateTimeFormatter.ofPattern("dd MMMM YYYY"));
 
     }
 

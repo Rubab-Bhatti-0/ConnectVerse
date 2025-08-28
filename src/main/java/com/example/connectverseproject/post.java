@@ -25,7 +25,7 @@ public class post implements Comparable<post> {
     }
 
     // Getters
-    public int getLikes() { return this.likes; }
+    public int getPostId() { return this.postId; }
     public String getContent() { return content; }
     public String getInterest() { return interest; }
     public LocalDateTime getDatetime() { return datetime; }

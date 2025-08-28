@@ -92,7 +92,7 @@ public class home {
         addTooltip(addPostButton,     "Add Post");
         addTooltip(myProfileButton,   "My Profile");
         addTooltip(settingsButton,    "Settings");
-        feedchoicebox.setItems(FXCollections.observableArrayList("All","Education", "Entertainment", "Sports","Others"));
+        feedchoicebox.setItems(FXCollections.observableArrayList("All","Education", "Entertainment", "Sports","Current Affairs","lifestyle","Others"));
         feedchoicebox.setValue("All");
         personalizedFeed("All");
         feedchoicebox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
@@ -130,7 +130,7 @@ public class home {
         contentArea.setPromptText("Enter your post here...");
         contentArea.setWrapText(true);
 
-        ChoiceBox<String> categoryBox = new ChoiceBox<>(FXCollections.observableArrayList("Education", "Entertainment", "Sports","Others"));
+        ChoiceBox<String> categoryBox = new ChoiceBox<>(FXCollections.observableArrayList("Education", "Entertainment", "Sports","Current Affairs","lifestyle","Others"));
         categoryBox.setValue("Education");
 
         VBox vbox = new VBox(10, new Label("Post Content:"), contentArea, new Label("Select Category:"), categoryBox);
@@ -293,7 +293,7 @@ public class home {
                 if (DataLoader.hasUserLiked(p.getowner(), AppData.currentUser.getId())) {
                     likeButton.setGraphic(photo);//
                 } else {
-                    //likeButton.setText("❤");
+
                     likeButton.setGraphic(whiteHeart);
                 }
 
